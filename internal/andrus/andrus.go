@@ -27,9 +27,15 @@ func New(token string, env string) (*Andrus, error) {
 	return &Andrus{discord: ds, logger: l}, nil
 }
 
+func (a *Andrus) registerHandlers() {
+	a.discord.AddHandler(a.readyHandler)
+	a.discord.AddHandler(a.createMessageHandler)
+}
+
 func (a *Andrus) Run() {
 	a.logger.Info().Msg("starting Andrus service")
 
+	a.registerHandlers()
 	err := a.discord.Open()
 	if err != nil {
 		a.logger.Fatal().Err(err).Msg("failed to open discord session")
