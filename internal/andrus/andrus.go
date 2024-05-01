@@ -30,6 +30,7 @@ func New(token string, env string) (*Andrus, error) {
 func (a *Andrus) registerHandlers() {
 	a.discord.AddHandler(a.readyHandler)
 	a.discord.AddHandler(a.createMessageHandler)
+	a.discord.AddHandler(a.voiceStateHandler)
 }
 
 func (a *Andrus) Run() {
