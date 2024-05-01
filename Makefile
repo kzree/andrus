@@ -22,3 +22,12 @@ confirm:
 .PHONY: run/app
 run/app:
 	@go run ./cmd/app -discord-token=${DISCORD_TOKEN} $(FLAGS) 
+	
+# ==================================================================================== #
+# BUILD
+# ==================================================================================== #
+
+## build/app: build the cmd/app application
+.PHONY: build/app
+build/app:
+	@go build -o bin/app ./cmd/app
