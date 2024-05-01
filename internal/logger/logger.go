@@ -33,7 +33,7 @@ func New(env string) *zerolog.Logger {
 		DisableDebugLogs()
 	}
 
-	zerolog.TimeFieldFormat = "2006-01-02T15:04:05.999"
+	zerolog.TimeFieldFormat = "2006-01-02T15:04:05.000"
 	return &logger
 }
 
