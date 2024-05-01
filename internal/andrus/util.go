@@ -31,3 +31,11 @@ func (a *Andrus) findVoiceChannel(m *discordgo.MessageCreate) (*discordgo.VoiceS
 
 	return nil, nil
 }
+
+func (a *Andrus) getCurrentVoiceConnection(guildID string) *discordgo.VoiceConnection {
+	if vc, ok := a.discord.VoiceConnections[guildID]; ok {
+		return vc
+	}
+
+	return nil
+}

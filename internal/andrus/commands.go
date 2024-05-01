@@ -29,3 +29,22 @@ func (a *Andrus) joinCommandHandler(m *discordgo.MessageCreate) {
 		a.logger.Error().Err(err).Msg("failed to join voice channel")
 	}
 }
+
+func (a *Andrus) leaveCommandHandler(m *discordgo.MessageCreate) {
+	vs, err := a.findVoiceChannel(m)
+
+	if err != nil || vs == nil {
+		a.sendMessage(m.ChannelID, "You must be in a voice channel to use this command!")
+	}
+
+	vc := a.getCurrentVoiceConnection(vs.GuildID)
+	if vc == nil {
+		a.logger.Error().Msg("failed to find voice connection")
+		return
+	}
+
+	err = vc.Disconnect()
+	if err != nil {
+		a.logger.Error().Err(err).Msg("failed to leave voice channel")
+	}
+}

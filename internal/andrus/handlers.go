@@ -36,6 +36,8 @@ func (a *Andrus) createMessageHandler(s *discordgo.Session, m *discordgo.Message
 			a.helloCommandHandler(m)
 		case CommandJoin:
 			a.joinCommandHandler(m)
+		case CommandLeave:
+			a.leaveCommandHandler(m)
 		default:
 			a.logger.Warn().Str("command", m.Content).Msg("failed to find matching command")
 		}
