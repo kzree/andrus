@@ -16,7 +16,7 @@ func getLoggerStyle(env string) io.Writer {
 		return io.Discard
 	}
 
-	output := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339Nano}
+	output := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: "2006-01-02T15:04:05.000Z07:00"}
 	output.FormatLevel = func(i interface{}) string {
 		return strings.ToUpper(fmt.Sprintf("| %-6s|", i))
 	}
@@ -33,7 +33,7 @@ func New(env string) *zerolog.Logger {
 		DisableDebugLogs()
 	}
 
-	zerolog.TimeFieldFormat = "2006-01-02T15:04:05.000"
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnixMs
 	return &logger
 }
 

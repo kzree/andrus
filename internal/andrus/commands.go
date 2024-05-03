@@ -20,6 +20,11 @@ func (a *Andrus) helloCommandHandler(m *discordgo.MessageCreate) {
 }
 
 func (a *Andrus) joinCommandHandler(m *discordgo.MessageCreate) {
+	isInChannel := a.checkIfInVoiceChannel(m)
+	if isInChannel {
+		return
+	}
+
 	vs, err := a.findVoiceChannel(m)
 
 	if err != nil || vs == nil {

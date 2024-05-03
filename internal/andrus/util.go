@@ -39,3 +39,13 @@ func (a *Andrus) getCurrentVoiceConnection(guildID string) *discordgo.VoiceConne
 
 	return nil
 }
+
+func (a *Andrus) checkIfInVoiceChannel(m *discordgo.MessageCreate) bool {
+	isInChannel := a.getCurrentVoiceConnection(m.GuildID) != nil
+	if isInChannel {
+		a.logger.Warn().Str("channel", m.ChannelID).Msg("failed to join channel, already in a voice channel")
+		a.sendMessage(m.ChannelID, "I'm already in a voice channel!")
+	}
+
+	return isInChannel
+}
