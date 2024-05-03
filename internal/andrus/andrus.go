@@ -8,11 +8,13 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/rs/zerolog"
 	"kzree.com/andrus/internal/logger"
+	"kzree.com/andrus/internal/queue"
 )
 
 type Andrus struct {
 	discord *discordgo.Session
 	logger  *zerolog.Logger
+	queue   *queue.Queue
 }
 
 func New(token string, env string) (*Andrus, error) {
@@ -24,7 +26,10 @@ func New(token string, env string) (*Andrus, error) {
 	}
 
 	l.Info().Msg("created Discord session")
-	return &Andrus{discord: ds, logger: l}, nil
+
+	q := queue.New(10, l)
+
+	return &Andrus{discord: ds, logger: l, queue: q}, nil
 }
 
 func (a *Andrus) registerHandlers() {
