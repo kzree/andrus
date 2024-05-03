@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"kzree.com/andrus/internal/queue"
 )
 
 const (
@@ -71,6 +72,13 @@ func (a *Andrus) playCommandHandler(m *discordgo.MessageCreate) {
 		return
 	}
 
+	url := split[1]
+	// validate that url is valid youtube url
+	if !strings.Contains(url, "youtube.com") {
+		a.sendMessage(m.ChannelID, "Invalid URL! currently only youtube is supported!")
+		return
+	}
+
 	vc := a.getCurrentVoiceConnection(vs.GuildID)
 	if vc == nil {
 		_, err = a.discord.ChannelVoiceJoin(vs.GuildID, vs.ChannelID, false, true)
@@ -78,4 +86,18 @@ func (a *Andrus) playCommandHandler(m *discordgo.MessageCreate) {
 			a.logger.Error().Err(err).Msg("failed to join voice channel")
 		}
 	}
+
+	media := queue.Media{URL: url, Requester: &queue.Requester{ID: m.Author.ID, Username: m.Author.Username}}
+	if a.current != nil {
+		err := a.queue.Add(&media)
+		if err != nil {
+			a.sendMessage(m.ChannelID, "Queue is full!")
+			return
+		}
+		a.sendMessage(m.ChannelID, "Added to queue!")
+		return
+	}
+
+	a.sendMessage(m.ChannelID, "Playing now!")
+	a.current = &media
 }

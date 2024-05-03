@@ -15,6 +15,7 @@ type Andrus struct {
 	discord *discordgo.Session
 	logger  *zerolog.Logger
 	queue   *queue.Queue
+	current *queue.Media
 }
 
 func New(token string, env string) (*Andrus, error) {

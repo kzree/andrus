@@ -7,24 +7,29 @@ import (
 	"github.com/rs/zerolog"
 )
 
+type Requester struct {
+	ID       string
+	Username string
+}
+
 type Media struct {
 	id        string
-	url       string
-	title     string
-	requester string
+	URL       string
+	Title     string
+	Requester *Requester
 }
 
 type Queue struct {
 	logger   *zerolog.Logger
 	maxItems int
-	items    []Media
+	items    []*Media
 }
 
 func New(maxItems int, l *zerolog.Logger) *Queue {
-	return &Queue{logger: l, maxItems: maxItems, items: make([]Media, 0)}
+	return &Queue{logger: l, maxItems: maxItems, items: make([]*Media, 0)}
 }
 
-func (q *Queue) Add(m Media) error {
+func (q *Queue) Add(m *Media) error {
 	q.logger.Info().Interface("media", m).Msg("adding media to queue")
 	if len(q.items) < q.maxItems {
 		q.logger.Debug().Int("size", len(q.items)).Int("max", q.maxItems).Msg("queue size before")
@@ -39,11 +44,11 @@ func (q *Queue) Add(m Media) error {
 	return errors.New("queue is full")
 }
 
-func (q *Queue) GetFirst() (Media, error) {
+func (q *Queue) GetFirst() (*Media, error) {
 	q.logger.Info().Msg("getting first media from queue")
 	if len(q.items) == 0 {
 		q.logger.Warn().Msg("queue is empty")
-		return Media{}, errors.New("queue is empty")
+		return nil, errors.New("queue is empty")
 	}
 
 	q.logger.Debug().Int("size", len(q.items)).Int("max", q.maxItems).Msg("queue size before")
