@@ -22,6 +22,7 @@ func (a *Andrus) joinCommandHandler(m *discordgo.MessageCreate) {
 
 	if err != nil || vs == nil {
 		a.sendMessage(m.ChannelID, "You must be in a voice channel to use this command!")
+		return
 	}
 
 	_, err = a.discord.ChannelVoiceJoin(vs.GuildID, vs.ChannelID, false, true)
