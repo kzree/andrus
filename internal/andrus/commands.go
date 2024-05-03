@@ -1,6 +1,8 @@
 package andrus
 
 import (
+	"strings"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -47,5 +49,28 @@ func (a *Andrus) leaveCommandHandler(m *discordgo.MessageCreate) {
 	err = vc.Disconnect()
 	if err != nil {
 		a.logger.Error().Err(err).Msg("failed to leave voice channel")
+	}
+}
+
+func (a *Andrus) playCommandHandler(m *discordgo.MessageCreate) {
+	vs, err := a.findVoiceChannel(m)
+
+	if err != nil || vs == nil {
+		a.sendMessage(m.ChannelID, "You must be in a voice channel to use this command!")
+		return
+	}
+
+	split := strings.Split(m.Content, " ")
+	if len(split) < 2 {
+		a.sendMessage(m.ChannelID, "You must provide a URL to play!")
+		return
+	}
+
+	vc := a.getCurrentVoiceConnection(vs.GuildID)
+	if vc == nil {
+		_, err = a.discord.ChannelVoiceJoin(vs.GuildID, vs.ChannelID, false, true)
+		if err != nil {
+			a.logger.Error().Err(err).Msg("failed to join voice channel")
+		}
 	}
 }

@@ -31,13 +31,17 @@ func (a *Andrus) createMessageHandler(s *discordgo.Session, m *discordgo.Message
 			Interface("author", map[string]any{"id": m.Author.ID, "username": m.Author.Username}).
 			Msg("received command")
 
-		switch m.Content {
+		command := strings.Split(m.Content, " ")[0]
+
+		switch command {
 		case CommandHello:
 			a.helloCommandHandler(m)
 		case CommandJoin:
 			a.joinCommandHandler(m)
 		case CommandLeave:
 			a.leaveCommandHandler(m)
+		case CommandPlay:
+			a.playCommandHandler(m)
 		default:
 			a.logger.Warn().Str("command", m.Content).Msg("failed to find matching command")
 		}
