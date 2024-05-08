@@ -3,20 +3,12 @@ package queue
 import (
 	"errors"
 
-	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 )
 
 type Requester struct {
 	ID       string
 	Username string
-}
-
-type Media struct {
-	id        string
-	URL       string
-	Title     string
-	Requester *Requester
 }
 
 type Queue struct {
@@ -33,9 +25,6 @@ func (q *Queue) Add(m *Media) error {
 	q.logger.Info().Interface("media", m).Msg("adding media to queue")
 	if len(q.items) < q.maxItems {
 		q.logger.Debug().Int("size", len(q.items)).Int("max", q.maxItems).Msg("queue size before")
-		id := uuid.New().String()
-		q.logger.Debug().Str("id", id).Interface("media", m).Msg("generated id for media")
-		m.id = id
 		q.items = append(q.items, m)
 		q.logger.Debug().Int("size", len(q.items)).Int("max", q.maxItems).Msg("queue size after")
 		return nil
