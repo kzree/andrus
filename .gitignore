@@ -1,2 +1,5 @@
 .envrc
 /bin
+/.cache
+
+.DS_Store

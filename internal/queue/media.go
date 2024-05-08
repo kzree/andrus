@@ -6,6 +6,7 @@ type Media struct {
 	id        string
 	URL       string
 	Title     string
+	FilePath  *string
 	Requester *Requester
 }
 

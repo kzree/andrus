@@ -89,7 +89,7 @@ func (a *Andrus) playCommandHandler(m *discordgo.MessageCreate) {
 
 	media := queue.NewMedia(url, "", &queue.Requester{ID: m.Author.ID, Username: m.Author.Username})
 	if a.current != nil {
-		err := a.queue.Add(media)
+		err = a.queue.Add(media)
 		if err != nil {
 			a.sendMessage(m.ChannelID, "Queue is full!")
 			return
@@ -98,7 +98,16 @@ func (a *Andrus) playCommandHandler(m *discordgo.MessageCreate) {
 		return
 	}
 
-	a.logger.Info().Interface("media", media).Msg("playing media")
-	a.sendMessage(m.ChannelID, "Playing now!")
+	a.logger.Info().Interface("media", media).Msg("preparing media for playing")
 	a.current = media
+
+	a.logger.Info().Msg("downloading media")
+	_, err = a.yt.DownloadMedia(*a.current)
+	a.logger.Info().Msg("finished media download")
+	if err != nil {
+		a.logger.Error().Err(err).Msg("failed to download media")
+		return
+	}
+
+	a.sendMessage(m.ChannelID, "Playing now!")
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog"
 	"kzree.com/andrus/internal/logger"
 	"kzree.com/andrus/internal/queue"
+	"kzree.com/andrus/internal/youtube"
 )
 
 type Andrus struct {
@@ -16,6 +17,7 @@ type Andrus struct {
 	logger  *zerolog.Logger
 	queue   *queue.Queue
 	current *queue.Media
+	yt      *youtube.Youtube
 }
 
 func New(token string, env string) (*Andrus, error) {
@@ -29,8 +31,9 @@ func New(token string, env string) (*Andrus, error) {
 	l.Info().Msg("created Discord session")
 
 	q := queue.New(10, l)
+	yt := youtube.New(l)
 
-	return &Andrus{discord: ds, logger: l, queue: q}, nil
+	return &Andrus{discord: ds, logger: l, queue: q, yt: yt}, nil
 }
 
 func (a *Andrus) registerHandlers() {
