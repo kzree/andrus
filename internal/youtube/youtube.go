@@ -46,7 +46,7 @@ func (y *Youtube) DownloadMedia(m queue.Media) (*string, error) {
 		return nil, err
 	}
 
-	m.Title = video.Title
+	m.SetMetadata(video.Title, video.Duration.String())
 	y.logger.Debug().Str("title", video.Title).Msg("found video metadata")
 
 	y.logger.Debug().Msg("getting video stream")

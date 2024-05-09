@@ -87,7 +87,7 @@ func (a *Andrus) playCommandHandler(m *discordgo.MessageCreate) {
 		}
 	}
 
-	media := queue.NewMedia(url, "", &queue.Requester{ID: m.Author.ID, Username: m.Author.Username})
+	media := queue.NewMedia(url, "", "", &queue.Requester{ID: m.Author.ID, Username: m.Author.Username})
 	if a.current != nil {
 		err = a.queue.Add(media)
 		if err != nil {
