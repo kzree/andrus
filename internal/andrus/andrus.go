@@ -33,6 +33,12 @@ func New(token string, env string) (*Andrus, error) {
 	q := queue.New(10, l)
 	yt := youtube.New(l)
 
+	err = yt.InitCache()
+	if err != nil {
+		l.Err(err).Msg("failed to initialize cache")
+		return nil, err
+	}
+
 	return &Andrus{discord: ds, logger: l, queue: q, yt: yt}, nil
 }
 

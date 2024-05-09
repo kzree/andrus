@@ -1,6 +1,7 @@
 package andrus
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -102,12 +103,13 @@ func (a *Andrus) playCommandHandler(m *discordgo.MessageCreate) {
 	a.current = media
 
 	a.logger.Info().Msg("downloading media")
-	_, err = a.yt.DownloadMedia(*a.current)
+	_, err = a.yt.DownloadMedia(a.current)
 	a.logger.Info().Msg("finished media download")
+	a.logger.Debug().Interface("media", a.current).Msg("playing media")
 	if err != nil {
 		a.logger.Error().Err(err).Msg("failed to download media")
 		return
 	}
 
-	a.sendMessage(m.ChannelID, "Playing now!")
+	a.sendMessage(m.ChannelID, fmt.Sprintf("Playing now! - **%s**", a.current.Title))
 }

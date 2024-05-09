@@ -33,13 +33,36 @@ func (y *Youtube) extractVideoID(url string) (string, error) {
 	return "", errors.New("failed to extract video ID")
 }
 
-func (y *Youtube) DownloadMedia(m queue.Media) (*string, error) {
+func (y *Youtube) checkIfVideoInCache(filePath string) bool {
+	_, err := os.Stat(filePath)
+	return err == nil
+}
+
+func (y *Youtube) InitCache() error {
+	_, err := os.Stat(".cache")
+
+	if os.IsNotExist(err) {
+		y.logger.Debug().Msg("creating cache directory")
+		err = os.Mkdir(".cache", 0755)
+	} else {
+		y.logger.Debug().Msg("using existing cache directory")
+	}
+
+	return err
+}
+
+func (y *Youtube) DownloadMedia(m *queue.Media) (*string, error) {
 	y.logger.Debug().Str("url", m.URL).Msg("starting media download")
 	videoID, err := y.extractVideoID(m.URL)
 	if err != nil {
 		return nil, err
 	}
+
 	y.logger.Debug().Str("videoID", videoID).Msg("extracted video ID")
+
+	fileName := ".cache/" + videoID + ".mp3"
+
+	cached := y.checkIfVideoInCache(fileName)
 
 	video, err := y.client.GetVideo(videoID)
 	if err != nil {
@@ -49,6 +72,11 @@ func (y *Youtube) DownloadMedia(m queue.Media) (*string, error) {
 	m.SetMetadata(video.Title, video.Duration.String())
 	y.logger.Debug().Str("title", video.Title).Msg("found video metadata")
 
+	if cached {
+		y.logger.Debug().Str("file", fileName).Msg("using cached media file")
+		return &fileName, nil
+	}
+
 	y.logger.Debug().Msg("getting video stream")
 	formats := video.Formats.Itag(140) // youtube Itag for m4a audio
 	stream, _, err := y.client.GetStream(video, &formats[0])
@@ -57,7 +85,6 @@ func (y *Youtube) DownloadMedia(m queue.Media) (*string, error) {
 	}
 	defer stream.Close()
 
-	fileName := ".cache/" + video.ID + ".mp3"
 	y.logger.Debug().Str("file", fileName).Msg("saving media file to cache")
 	file, err := os.Create(fileName)
 	if err != nil {
