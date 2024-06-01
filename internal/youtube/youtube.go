@@ -17,9 +17,8 @@ type Youtube struct {
 }
 
 func New(l *zerolog.Logger) *Youtube {
-	logger := l.With().Str("module", "youtube").Logger()
 	return &Youtube{
-		logger: &logger,
+		logger: l,
 		client: &kkdai_youtube.Client{},
 	}
 }
@@ -74,6 +73,7 @@ func (y *Youtube) DownloadMedia(m *queue.Media) (*string, error) {
 
 	if cached {
 		y.logger.Debug().Str("file", fileName).Msg("using cached media file")
+		m.FilePath = &fileName
 		return &fileName, nil
 	}
 
