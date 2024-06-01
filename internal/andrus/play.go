@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/jonas747/dca"
+	"kzree.com/andrus/internal/dca"
 	"kzree.com/andrus/internal/queue"
 )
 
